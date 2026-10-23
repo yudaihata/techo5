@@ -136,7 +136,7 @@ func setDateColor(s *esphome.Select, i int) {
 // clockLayoutRows are the three settings on the screen, under Display.
 func clockLayoutRows() []settingRow {
 	return []settingRow{
-		{id: "clockpos", label: "Clock position", sub: "Not for Dashboard, Agenda or World", kind: ctlChoice, value: clockPositions[clockPositionIndex()].label},
+		{id: "clockpos", label: "Clock position", sub: "Not for Photo, Dashboard, Agenda or World", kind: ctlChoice, value: clockPositions[clockPositionIndex()].label},
 		{id: "weatherpos", label: "Weather position", sub: "The weather's corner over the clock", kind: ctlChoice, value: weatherPositions[weatherPositionIndex()].label},
 		{id: "datecolor", label: "Date color", sub: "The date and AM/PM", kind: ctlChoice, value: dateColors[dateColorIndex()].label},
 	}

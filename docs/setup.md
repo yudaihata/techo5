@@ -601,6 +601,8 @@ like "kitchen screen" under its **Voice assistants** settings in Home Assistant.
 - **Video** (Show and Spot): videos full screen from Home Assistant's `play_video` action and, with **DLNA
   video** on, from DLNA apps. Off on a new device. On the setup page's Screen & Photos tab. See
   [Video](video.md).
+- **Photo clock style** (Show and Panel): a compact white date, time and weather at the lower left
+  over photos. Select **Photo** under **Clock style**. See [Photo clock](japanese.md#photo-clock-show-and-panel).
 - **Screen language** (Settings → General): the clock's day and date, the forecast's days, the
   weather's words and the alarm after the date are written in it: German, Spanish, French, Italian,
   Dutch, Portuguese, Russian or Japanese, and English for *Match all* or *English*. It also picks which words

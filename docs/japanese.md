@@ -91,3 +91,16 @@ branch preserves them. The official signing keys and update feed are unchanged.
 To keep the fork changes, turn off **Install updates automatically** for the official feed and
 install reviewed fork builds instead. The daily upstream PR check does not depend on the device
 auto-install switch. Keeping official auto-install on means local changes may be replaced overnight.
+
+## Photo clock (Show and Panel)
+
+Choose **Settings > Display > Clock style > Photo** (or Home Assistant's **Clock style** select).
+This keeps a compact date above a regular-weight time, with monochrome weather and temperature beside
+it, at the lower left. Text stays white over photographs, regardless of the theme's gold photo text.
+The photograph keeps its original brightness except for a soft shade behind the lower text. The
+selected screen font and 12/24-hour format still apply. Clock position and Date color are not used
+by this deliberately fixed photo layout. Other clock styles retain their existing behavior.
+
+Photo works with slideshow Background and Screensaver modes; the Screensaver's Off overlay remains
+off. Photo captions stay visible and move the clock above them. On the ordinary home screen the clock
+also moves above music, timers and next-up cards. Without a photo it uses the theme's text color.

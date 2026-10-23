@@ -35,7 +35,7 @@ jobs:
         if: matrix.tags == ''
         working-directory: echod
         run: |
-          PREVIEW_FONTS_DIR="$RUNNER_TEMP/japanese-fonts" go test ./internal/feature/display -run '^(TestJapanese|TestWrap)' -count=1
+          SHOW_PREVIEW="$RUNNER_TEMP/photo-previews" PREVIEW_FONTS_DIR="$RUNNER_TEMP/japanese-fonts" go test ./internal/feature/display -run '^(TestJapanese|TestWrap|TestPhotoClock)' -count=1
       - name: Formatting
         working-directory: echod
         run: test -z "$(gofmt -l internal/lib/locale/japanese.go internal/lib/triggers/japanese.go internal/feature/display/japanese*.go internal/feature/display/wrap*.go)"
@@ -57,3 +57,8 @@ jobs:
         with:
           name: techo5-japanese-arm
           path: bin/techo5-japanese-arm
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: matrix.tags == ''
+        with:
+          name: photo-clock-previews
+          path: ${{ runner.temp }}/photo-previews

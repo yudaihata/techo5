@@ -18,7 +18,7 @@ const slideshowWash = 90
 
 // slideshowBackground draws a Background-mode photo full-bleed, then the wash over it.
 func (r *renderer) slideshowBackground(img *image.RGBA) {
-	r.washed.lay(r.dst, img, washOf(walnut, slideshowWash))
+	r.washed.lay(r.dst, img, washOf(walnut, photoWash()))
 }
 
 // artWeather is the rain, snow, storm or fog moving over the weather art, when it is the picture.
@@ -42,8 +42,19 @@ func (r *renderer) slideshowScreensaverPage(s scene) {
 		}
 		return
 	}
+	if clockStyle() == stylePhoto {
+		draw.Draw(r.dst, r.dst.Rect, s.slideshowScreensaver, s.slideshowScreensaver.Bounds().Min, draw.Src)
+		r.artWeather(s)
+		bottom := r.h - r.s(30)
+		if len(s.slideshowCaptions) > 0 {
+			bottom -= r.s(80)
+		}
+		r.photoStyle(s, image.Rect(r.margin, r.s(84), r.w-r.margin, bottom))
+		r.readableOver(s.slideshowScreensaver, walnut, 0, func() { r.photoCaptions(s.slideshowCaptions) })
+		return
+	}
 	// Washed as the background is, and kept for the second when it is the weather art (washedArt).
-	r.washed.lay(r.dst, s.slideshowScreensaver, washOf(walnut, slideshowWash))
+	r.washed.lay(r.dst, s.slideshowScreensaver, washOf(walnut, photoWash()))
 	r.artWeather(s)
 	r.readableOver(s.slideshowScreensaver, walnut, slideshowWash, func() {
 		r.photoCaptions(s.slideshowCaptions)

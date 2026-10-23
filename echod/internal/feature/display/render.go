@@ -679,7 +679,13 @@ func (r *renderer) draw(s scene) {
 			r.nowPlaying(s)
 		} else {
 			// walnut is read inside, so the patches are made of the palette onPhoto puts in force.
-			page := func() { r.readableOver(behind, walnut, slideshowWash, func() { r.bigClock(s) }) }
+			page := func() {
+				if s.style.style() == stylePhoto {
+					r.bigClock(s)
+					return
+				}
+				r.readableOver(behind, walnut, slideshowWash, func() { r.bigClock(s) })
+			}
 			if s.slideshow != nil {
 				behind = s.slideshow
 				onPhoto(func() {
