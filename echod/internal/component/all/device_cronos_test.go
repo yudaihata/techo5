@@ -18,7 +18,7 @@ var notOnThisDevice = append(append([]string(nil), ringOnly...), notOnPanel...)
 // deviceSpecific is what the Show has beyond the shared list: AirPlay and Spotify Connect, which the
 // Spot does not offer, and the video player (feature/video), which neither the Spot nor the Dot has.
 // A panel's list goes without what notOnPanel names and has onlyOnPanel's besides.
-var deviceSpecific = append(slices.DeleteFunc([]string{"airplay", "spotify_connect", "video", "dlna_video", "video_state", "video_title", "video_error", "clock_hold_gesture"},
+var deviceSpecific = append(slices.DeleteFunc([]string{"airplay", "spotify_connect", "video", "dlna_video", "video_state", "video_title", "video_error", "clock_hold_gesture", "screen_nest_home"},
 	func(id string) bool { return slices.Contains(notOnPanel, id) }), onlyOnPanel...)
 
 // The Show plays videos from Home Assistant: the actions an automation calls are there. A panel has no
