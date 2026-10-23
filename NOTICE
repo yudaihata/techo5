@@ -348,3 +348,8 @@ echod (dependency)
   Finding other TECHO5 devices and the deck's computers, and being found by Music Assistant, over
   mDNS (feature/announce, feature/deck, feature/sendspin). The MIT License's text is as above, under
   EchoLocal.
+
+Photo weather artwork: Meteocons Flat by Bas Milius, MIT license.
+Vendored static SVG/PNG, source hashes and license are in
+echod/internal/feature/display/assets/meteocons-flat/. The same license notice is embedded
+with the PNG assets in Show/Panel daemon builds.

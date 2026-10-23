@@ -1,0 +1,32 @@
+{
+  "project": "Meteocons",
+  "author": "Bas Milius",
+  "license": "MIT",
+  "repository": "https://github.com/basmilius/meteocons",
+  "package": "@meteocons/svg-static",
+  "version": "3.0.0-next.10",
+  "git_head": "c33ba7aef014999e429c3dfb48d1c42519abce87",
+  "tarball": "https://registry.npmjs.org/@meteocons/svg-static/-/svg-static-3.0.0-next.10.tgz",
+  "integrity": "sha512-pVxx678gRenHjdDozzrT+fVNdGtoej5c3rNU3pnjZ2Za5j8H3ISNfS3mC75X+nVR+fvdSYbBsxbFLlhe1UU8ZQ==",
+  "style": "flat",
+  "svg_sha256": {
+    "clear-day.svg": "cb51d037d4db24b42b0d4816508defd34c7567a7b7b774b94ccdfee61ee44474",
+    "clear-night.svg": "0f47f46097f0d7c03c315b6d21e2ff42f351a587340bb9f865e69456c3d9f4f4",
+    "cloudy.svg": "270c0dcfd6f0b2376c88849642a9abe17ded788da3b3d15a5420dc7dc5a27a71",
+    "partly-cloudy-day.svg": "64267e73ea687d50e5754d7c5d0006f36f8a0a95bed8f085b57c9bf1f2c47cb5",
+    "partly-cloudy-night.svg": "b792b2dfe947a2e6e0154eceabff582996c8ca75fa009baa183f6aa39e363e3a",
+    "rain.svg": "82ed7379de2b4f4b4e202a6ca8224b8f5b2627a4e97ade0e07c1389b7e0f7b23",
+    "extreme-rain.svg": "21a387a59b92ebcb853187b412fa2b76c466cc10fb5709038789f3be99c39f7a",
+    "thunderstorms.svg": "80f02fc70d9845915b5717f8c4e14d3b3f1c938c481ed166ca6515d2a8ca2c7a",
+    "thunderstorms-rain.svg": "804728158ea9dd002a79ddfa6acf0363484ef09d16e0a96fdc2e27b373efafe5",
+    "snow.svg": "f03082d0af66dd84bc3effd00a0a163fa990d3b5cb6a8f9d51d6af58563e39a6",
+    "sleet.svg": "23024e722d948a573e2174dcb875e94851ec207bc2fd2fa225e392f6b4c84867",
+    "hail.svg": "1eb9c162afc64cf7f170e232c2fe4eaa1438899c8af199091b239096c7107407",
+    "fog.svg": "693341dbe8166244d72557a4035e51547a9d956ce1f3000960f22f35e979334d",
+    "wind.svg": "8f2baf08b7becb672434ae509c1792b801024545109bff4f88bedcfb265c9f81",
+    "hurricane.svg": "619227e6918fcbf5e1029d0f29131808bff7d9b21343b59fb32ffd9e379e393e",
+    "not-available.svg": "8fb2048b91ba298708a6000259742f5ad284f0694eb4182f1f3d56b9afa18fe2"
+  },
+  "rasterizer": "CairoSVG2.8.2 + Pillow12.0.0",
+  "conversion": "512px raster, crop alpha bounds, fit88px within transparent96px square"
+}

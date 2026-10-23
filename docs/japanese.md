@@ -95,8 +95,8 @@ auto-install switch. Keeping official auto-install on means local changes may be
 ## Photo clock (Show and Panel)
 
 Choose **Settings > Display > Clock style > Photo** (or Home Assistant's **Clock style** select).
-This keeps a compact date above a regular-weight time, with monochrome weather and temperature beside
-it, at the lower left. Text stays white over photographs, regardless of the theme's gold photo text.
+This keeps a compact date above a regular-weight time, with color weather and temperature beside
+it, at the lower left. Clock text stays white over photographs, regardless of the theme's gold photo text.
 The photograph keeps its original brightness except for a soft shade behind the lower text. The
 selected screen font and 12/24-hour format still apply. Clock position and Date color are not used
 by this deliberately fixed photo layout. Other clock styles retain their existing behavior.
@@ -104,3 +104,10 @@ by this deliberately fixed photo layout. Other clock styles retain their existin
 Photo works with slideshow Background and Screensaver modes; the Screensaver's Off overlay remains
 off. Photo captions stay visible and move the clock above them. On the ordinary home screen the clock
 also moves above music, timers and next-up cards. Without a photo it uses the theme's text color.
+
+Photo weather uses the static **Flat** style from [Meteocons](https://github.com/basmilius/meteocons)
+(Bas Milius, MIT). Sixteen conditions/day-night variants are vendored with version, package integrity
+and source hashes, so the device needs no CDN connection. The 96px transparent PNGs have normalized
+outer padding and are scaled/cached for each display size. Regenerate them from the included SVGs
+with `tools/japanese/render-weather-icons.py` (CairoSVG2.8.2, Pillow12.0.0, Cairo). Other clock styles
+keep their original icons.

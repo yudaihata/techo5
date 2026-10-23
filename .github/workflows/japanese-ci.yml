@@ -35,10 +35,10 @@ jobs:
         if: matrix.tags == ''
         working-directory: echod
         run: |
-          SHOW_PREVIEW="$RUNNER_TEMP/photo-previews" PREVIEW_FONTS_DIR="$RUNNER_TEMP/japanese-fonts" go test ./internal/feature/display -run '^(TestJapanese|TestWrap|TestPhotoClock)' -count=1
+          SHOW_PREVIEW="$RUNNER_TEMP/photo-previews" PREVIEW_FONTS_DIR="$RUNNER_TEMP/japanese-fonts" go test ./internal/feature/display -run '^(TestJapanese|TestWrap|TestPhotoClock|TestPhotoWeather)' -count=1
       - name: Formatting
         working-directory: echod
-        run: test -z "$(gofmt -l internal/lib/locale/japanese.go internal/lib/triggers/japanese.go internal/feature/display/japanese*.go internal/feature/display/wrap*.go)"
+        run: test -z "$(gofmt -l internal/lib/locale/japanese.go internal/lib/triggers/japanese.go internal/feature/display/japanese*.go internal/feature/display/wrap*.go internal/feature/display/photo*.go internal/feature/display/render_photo.go)"
       - name: Build Show development daemon
         if: matrix.tags == ''
         working-directory: echod

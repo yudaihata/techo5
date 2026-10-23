@@ -26,7 +26,7 @@ func photoWash() uint8 {
 	return slideshowWash
 }
 
-// photoStyle groups a quiet date, regular-weight time and monochrome weather at the lower left.
+// photoStyle groups a quiet date, regular-weight time and color weather at the lower left.
 // It uses the shared style layout's bottom so music, timers and next-up cards keep their space.
 func (r *renderer) photoStyle(s scene, box image.Rectangle) {
 	x, base := r.margin, box.Max.Y-r.s(6)
@@ -40,7 +40,7 @@ func (r *renderer) photoStyle(s scene, box image.Rectangle) {
 	}
 	timeFace, dateFace, weatherFace := r.styleFace(false, 84), r.styleFace(false, 23), r.styleFace(false, 28)
 	timeText := clockHM(s.now)
-	gap, iconSize := r.s(20), r.s(27)
+	gap, iconSize := r.s(20), r.s(36)
 	suffix := clockSuffix(s.now)
 	icon := s.weather.Condition != "" && conditionWords(s.weather.Condition) != ""
 	weatherWidth := r.width(weatherFace, s.weather.Temp)
@@ -87,12 +87,10 @@ func (r *renderer) photoStyle(s scene, box image.Rectangle) {
 	wx += gap - r.s(12)
 	weatherTop := base - capHeight(weatherFace) - r.s(3)
 	if icon {
-		name, _ := weatherGlyph(s.weather.Condition)
-		iconBox := image.Rect(wx, weatherTop, wx+iconSize, weatherTop+iconSize)
-		if photo {
-			r.mdiIconIn(name, iconBox.Add(image.Pt(r.s(1), r.s(2))), 27, color.RGBA{0, 0, 0, 130})
-		}
-		r.mdiIconIn(name, iconBox, 27, ink)
+		// Center the larger color artwork beside the temperature, rather than below its baseline.
+		mid := base - r.s(3) - capHeight(weatherFace)/2
+		iconBox := image.Rect(wx, mid-iconSize/2, wx+iconSize, mid-iconSize/2+iconSize)
+		r.photoWeatherIcon(s.weather.Condition, iconBox)
 		wx += iconSize + r.s(6)
 	}
 	if s.weather.Temp != "" {
