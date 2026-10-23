@@ -42,7 +42,7 @@ const (
 )
 
 // clockStyles are the choices, as the screen and Home Assistant name them, with what the config keeps.
-var clockStyles = []struct {
+var clockStyles = append([]struct {
 	label, value string
 }{
 	{"Classic", styleClassic},
@@ -60,7 +60,7 @@ var clockStyles = []struct {
 	{"Nixie", styleNixie},
 	{"Stack", styleStack},
 	{"Overlap", styleOverlap},
-}
+}, photoClockChoices()...)
 
 func clockStyleIndex() int {
 	v := config.Get().Screen.ClockStyle

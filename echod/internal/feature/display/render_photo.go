@@ -14,9 +14,9 @@ import (
 
 const stylePhoto = "photo"
 
-// Show-only registration keeps the round Spot's choices and renderers unchanged.
-func init() {
-	clockStyles = append(clockStyles, struct{ label, value string }{"Photo", stylePhoto})
+// Include choices during variable initialization, before display's init creates its API entity.
+func photoClockChoices() []struct{ label, value string } {
+	return []struct{ label, value string }{{"Photo", stylePhoto}}
 }
 
 func photoWash() uint8 {

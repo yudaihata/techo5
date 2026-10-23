@@ -8,6 +8,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 	"time"
 
@@ -89,4 +90,17 @@ func TestPhotoClock(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestPhotoClockDeviceSelection(t *testing.T) {
+	config.Use(filepath.Join(t.TempDir(), "state.json"))
+	d := Get()
+	if !slices.Contains(d.clockStyleSel.Options, "Photo") {
+		t.Fatal("the device's already-created API select does not offer Photo")
+	}
+	d.clockStyleSel.OnCommand("Photo")
+	if config.Get().Screen.ClockStyle != stylePhoto {
+		t.Fatal("the actual device select did not persist Photo")
+	}
+	d.clockStyleSel.OnCommand("Classic")
 }
