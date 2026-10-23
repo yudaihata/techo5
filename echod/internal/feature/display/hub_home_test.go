@@ -159,6 +159,7 @@ func TestHubUrgentPagesPreemptControls(t *testing.T) {
 		{"notification", func(s *scene) { s.showNotification = true }},
 		{"update", func(s *scene) { s.updateActive = true }},
 		{"video", func(s *scene) { s.showVideo = true }},
+		{"camera-test", func(s *scene) { s.camtest = &camTestView{} }},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -293,5 +294,13 @@ func TestHubModeSwitchRestoresStandardControls(t *testing.T) {
 	d.hubSwitch.OnCommand(false)
 	if d.hubSwitch.Get() || config.Get().Screen.NestHome || d.hub.panel != hubClosed {
 		t.Fatal("standard controls were not restored")
+	}
+}
+
+func TestHubFramePacingIncludesPaintTime(t *testing.T) {
+	for _, tc := range []struct{ paint, want time.Duration }{{0, 25 * time.Millisecond}, {10 * time.Millisecond, 15 * time.Millisecond}, {22 * time.Millisecond, 5 * time.Millisecond}, {40 * time.Millisecond, 5 * time.Millisecond}} {
+		if got := hubFrameWait(tc.paint); got != tc.want {
+			t.Fatalf("paint %v: wait %v, want %v", tc.paint, got, tc.want)
+		}
 	}
 }

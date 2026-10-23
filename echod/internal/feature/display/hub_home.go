@@ -95,7 +95,7 @@ func (h *hubState) page(dir image.Point, now time.Time) {
 // Only a clock, or the smart-home page itself, may carry these controls. Alerts, settings,
 // conversations, calls and setup retain their existing priorities and input handling.
 func hubEligible(s *scene) bool {
-	return s.phase == "idle" && s.cue == "" && !s.ring.any() && s.call.Phase == phone.Idle && !s.setupAsking && !s.showVideoAsk && !s.showVideo &&
+	return s.camtest == nil && s.phase == "idle" && s.cue == "" && !s.ring.any() && s.call.Phase == phone.Idle && !s.setupAsking && !s.showVideoAsk && !s.showVideo &&
 		!s.pin.open && !s.showWifi && !s.bt.Pairing && !s.showSheet && !s.showDrawer && !s.showDeck && !s.showWeather &&
 		!s.showCalendar && !s.showCamera && !s.showAlert && !s.showNotification && !s.showReminder && s.popup == nil &&
 		!s.showAnnouncement && !s.announceRecording && !s.updateActive && !s.nowPlaying && s.sunrise == 0
@@ -431,3 +431,9 @@ func (d *Display) hubSetSlider(row, x int) {
 
 // Use the existing hardware microphone switch and its persistent state.
 var flipHubMicrophone = func() { mute.Get().Flip() }
+
+// As upstream's Rainbow does, pace animation from frame start rather than sleeping a full interval
+// after painting. The minimum yield leaves time for the audio/control goroutines under heavy load.
+func hubFrameWait(elapsed time.Duration) time.Duration {
+	return max(25*time.Millisecond-elapsed, 5*time.Millisecond)
+}

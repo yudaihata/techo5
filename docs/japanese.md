@@ -30,7 +30,7 @@ The same mechanism supplies Japanese glyphs regardless of the selected primary f
 
 - `main` is an unmodified snapshot of the official repository. The local remote `upstream` points to
   `HuskerMinion/techo5`, and `origin` points to this fork.
-- `codex/japanese` is the default branch, based on official Show release **v1.6.1**. It keeps the reply
+- `codex/japanese` is the default branch, based on official Show release **v1.6.2**. It keeps the reply
   wrapping fix, language addition, and maintenance tools in separate commits. Japanese translations
   are mostly in additional `japanese.go` files to reduce conflicts.
 - `codex/japanese-reply-wrap-v1.4.0` preserves the first tested reply fix for the older installed build.
@@ -165,3 +165,10 @@ replace the dashboard's internal layout. An unconfigured dashboard has a local s
 Regression tests: `TestHub*`, `TestLocalSlider*`, `TestOpeningSwipe*`, `TestContactIdentity*`.
 `SHOW_PREVIEW=<folder>` exports synthetic home/control previews at 1280×800 and 960×480. Household
 reference images and actual framebuffer captures are kept outside the public repository.
+
+### Upstream v1.6.2 integration
+
+The fork retains upstream asynchronous framebuffer transfer and touch/turn CPU boosting.
+Nest-style transitions now subtract painting time from their 25 ms frame budget, with a 5 ms
+minimum yield. Japanese fonts, photo clock, flat weather icons, and quick controls remain available.
+Camera diagnostics take priority over the home controls.
