@@ -69,6 +69,18 @@ Japanese selection and switching back, localized dates and update dialogs, voice
 Japanese reply rendering using the verified CJK font. Successful runs produce an ARMv7 Show daemon
 artifact; it is a development artifact, not an official signed OTA release.
 
+For the standard ARM Show image (including the first-generation Echo Show 8/crown), a clean
+checkout can prepare a personal rootfs without installing anything:
+
+```sh
+python3 tools/japanese/build-show.py
+```
+
+It verifies the official release manifest signature and rootfs hash, stamps the exact source commit,
+replaces only the daemon and release label, checks all archive members and metadata, and writes the
+rootfs and hashes under `bin/japanese/`. This is not the athena or skylight image. Never install an
+image intended for a different board.
+
 Follow [the build guide](building.md) and [contributing instructions](../CONTRIBUTING.md) to try a
 daemon temporarily before preparing a persistent image. For a persistent image use the matching
 official release's verified rootfs and replace only the daemon and release label, keeping the kernel
