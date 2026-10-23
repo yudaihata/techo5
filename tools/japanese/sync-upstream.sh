@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 base=codex/japanese
-repo=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+repo=$(gh repo view "$(git remote get-url origin)" --json nameWithOwner --jq .nameWithOwner)
 if [[ "$repo" == HuskerMinion/* ]]; then
   echo 'Run this in your fork, not the official repository.' >&2; exit 1
 fi
@@ -29,6 +29,11 @@ git switch -c "$branch" "origin/$base"
 if ! git merge --no-edit "$release"; then
   echo 'Upstream changed overlapping code/history. Resolve this merge manually; nothing was pushed.' >&2
   exit 1
+fi
+printf '%s\n' "$tag" > tools/japanese/upstream-version.txt
+git add tools/japanese/upstream-version.txt
+if ! git diff --cached --quiet; then
+  git commit -m "fork: track upstream Show release $tag"
 fi
 git push -u origin "$branch"
 body=$(mktemp)

@@ -50,7 +50,7 @@ jobs:
         run: |
           pkg=github.com/HuskerMinion/techo5/echod/internal/layout
           commit=$(git rev-parse --short HEAD)
-          base=$(git describe --tags --match 'v[0-9]*' --abbrev=0)
+          base=$(cat ../tools/japanese/upstream-version.txt)
           go build -trimpath -ldflags "-s -w -X $pkg.Version=$base+ja.dev -X $pkg.GitCommit=$commit" -o ../bin/techo5-japanese-arm ./cmd/echod
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: matrix.tags == ''
