@@ -1,3 +1,5 @@
+> **Japanese fork:** Select 日本語 from Screen language. See [Japanese support and upstream updates](docs/japanese.md).
+
 <p align="center">
   <img src="logo/TECHO5_logo.png" alt="TECHO5" width="220">
 </p>

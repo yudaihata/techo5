@@ -1,0 +1,59 @@
+name: Japanese fork checks
+on:
+  push:
+    branches: ['codex/japanese', 'codex/upstream-*']
+  pull_request:
+    branches: ['codex/japanese']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tags: ['', dot, spot, panel]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: echod/go.mod
+          cache-dependency-path: echod/go.sum
+      - name: Verify Japanese preview font
+        run: python3 tools/japanese/fetch-font.py "$RUNNER_TEMP/japanese-fonts"
+      - name: Test and vet
+        working-directory: echod
+        env:
+          BUILD_TAGS: ${{ matrix.tags }}
+        run: |
+          go test -tags "$BUILD_TAGS" ./...
+          go vet -tags "$BUILD_TAGS" ./...
+      - name: Render Japanese replies with the CJK font
+        if: matrix.tags == ''
+        working-directory: echod
+        run: |
+          PREVIEW_FONTS_DIR="$RUNNER_TEMP/japanese-fonts" go test ./internal/feature/display -run '^(TestJapanese|TestWrap)' -count=1
+      - name: Formatting
+        working-directory: echod
+        run: test -z "$(gofmt -l internal/lib/locale/japanese.go internal/lib/triggers/japanese.go internal/feature/display/japanese*.go internal/feature/display/wrap*.go)"
+      - name: Build Show development daemon
+        if: matrix.tags == ''
+        working-directory: echod
+        env:
+          GOOS: linux
+          GOARCH: arm
+          GOARM: '7'
+          CGO_ENABLED: '0'
+        run: |
+          pkg=github.com/HuskerMinion/techo5/echod/internal/layout
+          commit=$(git rev-parse --short HEAD)
+          base=$(git describe --tags --match 'v[0-9]*' --abbrev=0)
+          go build -trimpath -ldflags "-s -w -X $pkg.Version=$base+ja.dev -X $pkg.GitCommit=$commit" -o ../bin/techo5-japanese-arm ./cmd/echod
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: matrix.tags == ''
+        with:
+          name: techo5-japanese-arm
+          path: bin/techo5-japanese-arm

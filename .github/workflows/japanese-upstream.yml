@@ -1,0 +1,28 @@
+name: Check upstream Show release
+on:
+  schedule:
+    - cron: '17 21 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+concurrency:
+  group: japanese-upstream
+  cancel-in-progress: false
+jobs:
+  update:
+    if: github.repository != 'HuskerMinion/techo5'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: codex/japanese
+          fetch-depth: 0
+      - name: Prepare upstream merge PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          tools/japanese/sync-upstream.sh
