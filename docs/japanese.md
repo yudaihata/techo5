@@ -111,3 +111,14 @@ and source hashes, so the device needs no CDN connection. The 96px transparent P
 outer padding and are scaled/cached for each display size. Regenerate them from the included SVGs
 with `tools/japanese/render-weather-icons.py` (CairoSVG2.8.2, Pillow12.0.0, Cairo). Other clock styles
 keep their original icons.
+
+## Noto Sans CJK JP as the primary font
+
+Choose **Settings > Display > Font > Noto Sans CJK JP**, or select it in Home Assistant's
+**Screen font** entity. Both the full static Regular and Bold cuts are bundled (SIL OFL1.1),
+covering Japanese, basic Latin and clock digits in one family, without requiring an uploaded font.
+A few extended Latin letters absent from Noto CJK continue to use the existing Go fallback.
+The full font data and original license/source hashes are in `echod/internal/lib/fonts/files/notosanscjkjp/`.
+They are read through ReaderAt to avoid copying both large font files to the heap. The0.97 size
+normalization keeps existing layouts close to their original widths. Other font/style choices remain
+available; a skin with its own font still overrides the selected font, as upstream specifies.

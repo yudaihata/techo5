@@ -23,7 +23,7 @@ import (
 	"golang.org/x/image/font/sfnt"
 )
 
-//go:embed files/*/*.ttf
+//go:embed files/*/*.ttf files/notosanscjkjp/*.otf files/notosanscjkjp/LICENSE
 var files embed.FS
 
 // Family is a font on offer: its name as the screen and Home Assistant say it, and its value as the
@@ -54,6 +54,7 @@ var families = []Family{
 	{"Open Sans", "opensans", 0.98},
 	{"Google Sans Flex", "googlesansflex", 1},
 	{"Go Mono", GoMono, 0.755},
+	{"Noto Sans CJK JP", NotoSansCJKJP, 0.97},
 }
 
 // skinFonts are fonts a screen skin draws in that are not on offer by themselves: sized for the skin's
@@ -127,6 +128,17 @@ func fontsOf(value string) ([2]*sfnt.Font, error) {
 	parsed.mu.Lock()
 	defer parsed.mu.Unlock()
 	if f, ok := parsed.fonts[value]; ok {
+		return f, nil
+	}
+	if value == NotoSansCJKJP {
+		f, err := notoFonts()
+		if err != nil {
+			return f, err
+		}
+		if parsed.fonts == nil {
+			parsed.fonts = map[string][2]*sfnt.Font{}
+		}
+		parsed.fonts[value] = f
 		return f, nil
 	}
 	var src [2][]byte

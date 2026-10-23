@@ -15,6 +15,7 @@ import (
 func TestEveryFamilyReadsAndHasTheScreensCharacters(t *testing.T) {
 	const words = "0123456789:APMapm ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz .,;!?'\"()-/%+&@#" +
 		"°·…–—‘’“”‹›× ÉàáäéêìíñöûüÄÖÜßçèëïîôœÀÂÇÈÊËÎÏÔÙÛŸ ŽžŁłŚśŹźŻżĆćŃńĄąĘęČčŘřŠšŤťŮů"
+	goFont, _ := Font(Go, false)
 	for _, fam := range Families() {
 		for _, bold := range []bool{false, true} {
 			f, err := Font(fam.Value, bold)
@@ -23,6 +24,13 @@ func TestEveryFamilyReadsAndHasTheScreensCharacters(t *testing.T) {
 			}
 			for _, r := range words {
 				if i, err := f.GlyphIndex(nil, r); err != nil || i == 0 {
+					// The full CJK font omits a few extended Latin letters; its normal Go fallback
+					// must cover them. The original bundled Latin families still cover every one.
+					if fam.Value == NotoSansCJKJP {
+						if fallback, _ := goFont.GlyphIndex(nil, r); fallback != 0 {
+							continue
+						}
+					}
 					t.Errorf("%s (bold %v) has no %q", fam.Name, bold, r)
 				}
 			}
