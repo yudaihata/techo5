@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"embed"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/png"
 	"sync"
@@ -91,6 +92,9 @@ func photoWeatherImage(condition string, size int) image.Image {
 
 func (r *renderer) photoWeatherIcon(condition string, box image.Rectangle) {
 	if icon := photoWeatherImage(condition, box.Dx()); icon != nil {
+		// A small alpha-mask shadow separates pale clouds from bright photographs.
+		shadow := box.Add(image.Pt(max(1, r.s(1)), max(1, r.s(2))))
+		draw.DrawMask(r.dst, shadow, image.NewUniform(color.RGBA{0, 0, 0, 110}), image.Point{}, icon, icon.Bounds().Min, draw.Over)
 		draw.Draw(r.dst, box, icon, icon.Bounds().Min, draw.Over)
 	}
 }

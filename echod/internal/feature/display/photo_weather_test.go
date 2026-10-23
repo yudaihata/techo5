@@ -60,8 +60,7 @@ func TestPhotoWeatherPreview(t *testing.T) {
 			ink = color.RGBA{30, 38, 50, 255}
 		}
 		draw.Draw(canvas, image.Rect(x, y, x+192, y+112), image.NewUniform(bg), image.Point{}, draw.Src)
-		icon := photoWeatherImage(condition, 64)
-		draw.Draw(canvas, image.Rect(x+64, y+4, x+128, y+68), icon, image.Point{}, draw.Over)
+		r.photoWeatherIcon(condition, image.Rect(x+64, y+4, x+128, y+68))
 		r.text(r.micro, condition, x+10, y+96, ink)
 	}
 	if dir := os.Getenv("SHOW_PREVIEW"); dir != "" {
