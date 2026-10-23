@@ -122,3 +122,46 @@ The full font data and original license/source hashes are in `echod/internal/lib
 They are read through ReaderAt to avoid copying both large font files to the heap. The0.97 size
 normalization keeps existing layouts close to their original widths. Other font/style choices remain
 available; a skin with its own font still overrides the selected font, as upstream specifies.
+
+## Nest-style home controls (Show / Panel)
+
+Settings > Display > **Nest-style home**, or Home Assistant's `screen_nest_home` switch,
+selects an optional home interaction layer. Off preserves upstream gestures. The chosen clock,
+photos, font, night schedule and dashboard configuration are kept.
+
+From the home clock:
+
+| Gesture | Result |
+| --- | --- |
+| Left edge, swipe right | Manual dim night clock; tap or swipe left returns |
+| Right edge, swipe left | Existing Home Assistant dashboard |
+| Top edge, swipe down | The same dashboard |
+| Bottom edge, swipe up | Floating quick-controls panel over the live photo/clock |
+
+The five controls are brightness, volume, **hardware microphone mute**, new alarm, settings.
+No feedback button is included. Brightness has ten steps (1–10); tap the sun for auto brightness,
+shown by an A. Dragging/tapping the dots sets a manual level and exits auto. Volume is 0–10,
+converted to the device's normal media-volume steps. Tap its number/chevron for an independently
+adjustable alarm/timer volume row. A tap outside, downward swipe, or 30 seconds without input
+closes quick controls. Zero alarm volume is silent; normal device alarm-volume policy applies.
+The volume icon returns to the quick-controls menu.
+
+Page changes slide in the direction of the swipe. Quick panels rise from and return to the bottom;
+the alarm row rises out from behind media volume. Page snapshots avoid redrawing the dashboard on
+every animation frame. Panel backgrounds use a cached alpha mask to preserve the photo underneath.
+Opening gestures are consumed through the end of their touchscreen contact; local slider drags
+do not turn other swipes into slider input. Calls, alarms, notifications, PIN/setup/update dialogs,
+video and voice turns take priority over quick controls. Disabling the layer clears its local state.
+
+Mute uses the existing `mute.Flip` driver and persisted microphone state, with no extra wake-word
+setting. On Show hardware whose privacy latch can only be released physically, use the microphone
+button on the device to unmute; the panel displays a hint while muted. Manual night display changes
+only transient display state/backlight, not scheduled night hours or saved brightness.
+
+The smart-home page uses the dashboard already configured on the device, including its existing
+controls and touch forwarding. This change does not recreate Nest's Google service integrations or
+replace the dashboard's internal layout. An unconfigured dashboard has a local settings entry.
+
+Regression tests: `TestHub*`, `TestLocalSlider*`, `TestOpeningSwipe*`, `TestContactIdentity*`.
+`SHOW_PREVIEW=<folder>` exports synthetic home/control previews at 1280×800 and 960×480. Household
+reference images and actual framebuffer captures are kept outside the public repository.

@@ -40,6 +40,7 @@ var shade = color.RGBA{0x00, 0x00, 0x00, 0x90}
 
 // scene is one frame's worth of facts.
 type scene struct {
+	hub       hubView
 	streaming bool // the camera is being streamed (feature/camstream)
 
 	now     time.Time
@@ -271,8 +272,9 @@ type scene struct {
 // renderer draws scenes onto one canvas. Faces are made once: parsing a font is cheap, but
 // building a face at each size is not something to do per frame.
 type renderer struct {
-	paint        // the canvas, its size, and the settings screen's tap zones
-	climateParts // the thermostat sheet's, where it was last drawn (climate_sheet.go)
+	hubAnimation hubAnimation // used only by the frame goroutine
+	paint                     // the canvas, its size, and the settings screen's tap zones
+	climateParts              // the thermostat sheet's, where it was last drawn (climate_sheet.go)
 	// glow is the Glow style's images, kept between frames (glow.go).
 	glow glowBuffers
 	// nixie is the Nixie style's tubes, kept between frames (nixie.go).
@@ -467,10 +469,15 @@ func (r *renderer) useFont() {
 // draw composes a whole frame. Everything is repainted: the canvas is small and a full paint is
 // simpler than tracking what changed.
 func (r *renderer) draw(s scene) {
+	r.drawHubFrame(s)
+}
+
+func (r *renderer) drawScene(s scene) {
 	r.useFont()
 	r.marked, r.footAt, r.lcarsDrawn = false, 0, false
 	defer r.streamingDot(s)  // over everything, the update overlay included: deferred first, drawn last
 	defer r.updateOverlay(s) // Draw update overlay at the end of frame using defer
+	defer r.hubOverlay(s)
 
 	if !s.showDeck {
 		// Where the deck's buttons were is nothing to tap once something else is drawn there.

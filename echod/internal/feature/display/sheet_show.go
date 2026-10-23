@@ -101,7 +101,14 @@ func colorsCard() cardView {
 }
 
 // adaptRows is the Show's rows as they are: its card is wide enough for all of them.
-func adaptRows(rows []settingRow, _ sheetView) []settingRow { return rows }
+func adaptRows(rows []settingRow, sv sheetView) []settingRow {
+	if sv.st.cat == catDisplay {
+		rows = append([]settingRow{
+			{id: "nesthome", label: "Nest-style home", sub: "Edge navigation and quick controls", kind: ctlToggle, on: config.Get().Screen.NestHome},
+		}, rows...)
+	}
+	return rows
+}
 
 // devicePicker is a list of the Show's own: themes, and the drawer's station lists.
 func devicePicker(id string, sv sheetView) (pickerView, bool) {
@@ -162,6 +169,8 @@ func (d *Display) deviceRowTap(id string, p part, opt int) bool {
 		return true
 	}
 	switch id {
+	case "nesthome":
+		d.setHubHome(!config.Get().Screen.NestHome)
 	case "theme":
 		d.openPicker(id)
 	case "colors":

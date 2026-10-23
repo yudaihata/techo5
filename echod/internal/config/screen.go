@@ -5,6 +5,8 @@ import "slices"
 // Screen is the panel: whether it is lit, how brightly in percent, and whether the room's light
 // is allowed to dim it below that. Only the Echo Show has one; on the Dot nothing reads this.
 type Screen struct {
+	// NestHome enables edge navigation and quick controls on the Show. False keeps upstream UI.
+	NestHome bool `json:"nest_home,omitempty"`
 	// ClockHold tells Home Assistant of a finger held on the clock (feature/display, gesture_hold.go).
 	ClockHold bool `json:"clock_hold,omitempty"`
 
@@ -214,6 +216,10 @@ func defaultScreen() Screen {
 }
 
 type ScreenWriter struct{ st *Store }
+
+func (w ScreenWriter) NestHome(v bool) error {
+	return w.st.Update(func(c *Config) { c.Screen.NestHome = v })
+}
 
 func (w ScreenWriter) On(v bool) error {
 	return w.st.Update(func(c *Config) { c.Screen.On = v })

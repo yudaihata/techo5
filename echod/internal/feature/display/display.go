@@ -111,6 +111,8 @@ const (
 )
 
 type Display struct {
+	hub       hubState // Nest-style home controls; protected by mu
+	hubSwitch *esphome.Switch
 	// holdsMu makes reading whether holds are wanted and telling the touchscreen one step (applyHolds).
 	holdsMu sync.Mutex
 
@@ -459,6 +461,7 @@ func build() *Display {
 	d.clock = clockSelect(d.wake)
 	d.clockStyleSel = clockStyleSelect(d)
 	d.fontSel = fontSelect(d)
+	d.hubSwitch = hubHomeSwitch(d)
 	setup.SetScreen(&setup.ScreenChoices{Styles: clockStyleOptions(), Current: clockStyleIndex, Choose: d.setClockStyle,
 		Fonts: fonts.Names(), FontNow: fontIndex, ChooseFont: d.setFont,
 		OwnFonts: ownFonts, AddFont: d.addOwnFont, RemoveFont: d.removeOwnFont, MaxFont: fonts.MaxOwnFile,
@@ -574,12 +577,13 @@ func (d *Display) clockTapSel() *esphome.Select { return d.clockTap }
 
 func (d *Display) Entities() []esphome.Entity {
 	return append([]esphome.Entity{d.light, d.power, d.roomSw, d.auto, d.clock, d.clockStyleSel, d.clockPos, d.dateCol, d.weatherPos, d.camTime, d.answerTime, d.turnStyle, d.timerStyle, d.skinSl, d.callBtn, d.weatherFx, d.lang, d.strip, d.themeSel, d.lightThemeSel, d.themeModeSel, d.nightHours, d.nightStart, d.nightEnd, d.nightMode, d.atNight, d.nightStyle, d.glowLevel, d.dimmestNum,
-		d.pop.on, d.pop.lead, d.pop.chime, d.pop.allDay, d.clockTap, d.styleSwipeSw, d.volumeSwipeSw, d.nightTapSw, d.fontSel}, d.lookEnts...)
+		d.pop.on, d.pop.lead, d.pop.chime, d.pop.allDay, d.clockTap, d.styleSwipeSw, d.volumeSwipeSw, d.nightTapSw, d.fontSel, d.hubSwitch}, d.lookEnts...)
 }
 
 // Restore lights the panel the way it was left. Before the framebuffer is opened: the backlight is
 // its own device.
 func (d *Display) Restore(c config.Config) {
+	d.hubSwitch.Set(c.Screen.NestHome)
 	setClock24(d.clock, c.Screen.Clock24)
 	d.roomSw.Set(c.Screen.IgnoreRoomLights)
 	d.describeScreen()
@@ -695,6 +699,9 @@ func (d *Display) relight(jump bool) {
 			target = float64(d.glowBacklight()) // relight holds mu
 		} else if (phone.Get().Busy() || video.Get().State().Active() || d.askedUp(time.Now())) && nightNow(time.Now()) {
 			target = math.Min(target, screen.BacklightMax/2) // a call at night: enough to see who it is
+		}
+		if d.hub.night {
+			target = math.Min(target, float64(glowSteps[0]))
 		}
 	}
 	// The light before an alarm takes the backlight over while it runs: it starts under anything the
@@ -1219,6 +1226,10 @@ func (d *Display) gesture(g touch.Gesture) {
 	// A cue turn's captions over the deck, the dashboard, the music or the clock: a tap on them puts
 	// them away, and anywhere else is the page's (turn_cue.go).
 	if d.captionsTap(g) {
+		return
+	}
+
+	if d.hubGesture(g) {
 		return
 	}
 
@@ -2731,6 +2742,10 @@ func (d *Display) frame() (next time.Duration) {
 	d.callShown = s.callButton
 	d.mu.Unlock()
 
+	d.hubScene(&s)
+	if s.hub.moving {
+		defer func() { next = min(next, 25*time.Millisecond) }()
+	}
 	if s.showVideo && s.videoLive {
 		// The picture's own frames go to the panel (paintVideo); the canvas holds only the controls.
 		d.r.draw(s)
@@ -2756,7 +2771,7 @@ func (d *Display) frame() (next time.Duration) {
 		// photo changing, rain falling) keeps its own pace.
 		defer func() { next = min(next, cueFrame) }()
 	}
-	unskinned(d.dev, s.redClockFace() || d.r.marked)
+	unskinned(d.dev, s.redClockFace() || d.r.marked || (s.hub.shown && (s.hub.night || s.hub.empty || s.hub.panel != hubClosed)))
 	if err := d.dev.Present(); err != nil {
 		slog.Warn("presenting the frame failed", "err", err)
 	}

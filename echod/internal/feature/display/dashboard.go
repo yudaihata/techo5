@@ -99,6 +99,10 @@ func (d *Display) overNight() bool {
 // the clock for a while.
 func (d *Display) closeDashboard() {
 	d.mu.Lock()
+	if d.hub.smart {
+		d.hub.smart = false
+		d.hub.page(image.Pt(1, 0), time.Now())
+	}
 	d.dash, d.dashEdge, d.dashNight = false, edgeNone, false
 	if dashboard.Get().Idle() {
 		d.dashAwayUntil = time.Now().Add(dashAway)

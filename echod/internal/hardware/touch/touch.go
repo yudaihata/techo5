@@ -12,6 +12,7 @@ package touch
 import (
 	"context"
 	"fmt"
+	"image"
 	"sync"
 	"time"
 
@@ -95,10 +96,12 @@ type Screen struct {
 	rawW int // panel x range, exclusive
 	rawH int // panel y range, exclusive
 
-	mu     sync.Mutex
-	down   bool // a finger is on the panel
-	follow bool // every moving finger is followed (Hold, Drag, Release) rather than swiped
-	holds  bool // holds are reported on a device without holdGestures (SetHolds)
+	mu         sync.Mutex
+	contact    uint64          // monotonic contact identity, including contacts that only send swipe notches
+	down       bool            // a finger is on the panel
+	follow     bool            // every moving finger is followed (Hold, Drag, Release) rather than swiped
+	followArea image.Rectangle // independent local sliders; does not change dashboard follow mode
+	holds      bool            // holds are reported on a device without holdGestures (SetHolds)
 }
 
 // SetHolds reports holds on a device that otherwise does not (holdGestures): a finger that stays put
@@ -126,6 +129,13 @@ func (s *Screen) holding() bool {
 func (s *Screen) SetFollow(on bool) {
 	s.mu.Lock()
 	s.follow = on
+	s.mu.Unlock()
+}
+
+// SetFollowArea follows drags that start inside a local control, leaving other gestures unchanged.
+func (s *Screen) SetFollowArea(area image.Rectangle) {
+	s.mu.Lock()
+	s.followArea = area
 	s.mu.Unlock()
 }
 
@@ -341,6 +351,9 @@ func (s *Screen) track(ctx context.Context, path string, read func() (input.Even
 
 func (s *Screen) setDown(v bool) {
 	s.mu.Lock()
+	if v && !s.down {
+		s.contact++
+	}
 	s.down = v
 	s.mu.Unlock()
 }
@@ -382,7 +395,7 @@ func (s *Screen) moved(f *finger) {
 	}
 	x0, y0 := s.landscape(f.sx, f.sy)
 	x1, y1 := s.landscape(f.x, f.y)
-	if s.follow && !f.swiped && (abs(x1-x0) > followMove || abs(y1-y0) > followMove) {
+	if (s.follow || image.Pt(x0, y0).In(s.followArea)) && !f.swiped && (abs(x1-x0) > followMove || abs(y1-y0) > followMove) {
 		f.held = true
 		if f.holdTimer != nil {
 			f.holdTimer.Stop()
@@ -471,4 +484,11 @@ func abs(v int) int {
 		return -v
 	}
 	return v
+}
+
+// Contact reports the current finger's identity and whether it is still touching the panel.
+func (s *Screen) Contact() (uint64, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.contact, s.down
 }
