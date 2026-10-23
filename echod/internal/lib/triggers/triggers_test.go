@@ -7,6 +7,7 @@ import (
 
 // One sentence per language for each thing the screen does, as someone would actually say it.
 var spoken = map[string]struct{ weather, radar, home, camera string }{
+	"ja": {"明日の天気を教えて", "雨雲レーダーを見せて", "時計に戻って", "玄関のカメラを見せて"},
 	"en": {"what's the weather", "show me the rain map", "go home", "show the front door"},
 	"de": {"Wie ist das Wetter?", "Zeig mir die Regenkarte", "Zurück zur Uhr", "Zeig die Haustür"},
 	"es": {"¿Qué tiempo hace?", "Muéstrame el mapa de lluvia", "Volver al reloj", "Muestra la puerta principal"},
@@ -189,6 +190,26 @@ func TestPortugueseGoingHome(t *testing.T) {
 	for _, heard := range []string{"Volta pro início", "Volta pra tela inicial", "Mostra o relógio"} {
 		if !AboutGoingHome(heard, "pt") {
 			t.Errorf("%q did not bring the clock back", heard)
+		}
+	}
+}
+
+func TestJapaneseWeatherIntent(t *testing.T) {
+	for _, heard := range []string{"雨音を再生して", "雨が降る音を流して", "雪子さんに電話して", "雨戸を閉めて"} {
+		for _, lang := range []string{"ja", MatchAll} {
+			if AboutWeather(heard, lang) {
+				t.Errorf("%q under %q opened the weather", heard, lang)
+			}
+		}
+	}
+	for _, heard := range []string{"今日は雨が降る？", "明日は雪かな", "今日の気温は？", "雨の地図を見せて"} {
+		if !AboutWeather(heard, "ja") {
+			t.Errorf("%q did not open the weather", heard)
+		}
+	}
+	for _, word := range Languages["ja"].Radar {
+		if !AboutWeather(word, "ja") {
+			t.Errorf("radar %q cannot reach the weather page", word)
 		}
 	}
 }

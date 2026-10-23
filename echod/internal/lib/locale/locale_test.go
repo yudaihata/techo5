@@ -19,6 +19,7 @@ func TestDates(t *testing.T) {
 		{"nl", "Maandag 5 januari", "Ma 5 jan", "5 januari", "Ma 5"},
 		{"pt", "Segunda-feira, 5 de janeiro", "Seg, 5 jan", "5 de janeiro", "Seg 5"},
 		{"ru", "Понедельник, 5 января", "Пн, 5 янв", "5 января", "Пн 5"},
+		{"ja", "1月5日 月曜日", "1/5（月）", "1月5日", "5日（月）"},
 	} {
 		if got := LongDate(mon, c.lang); got != c.long {
 			t.Errorf("%q long: %q, want %q", c.lang, got, c.long)
@@ -106,6 +107,7 @@ func TestPhotoDate(t *testing.T) {
 		"en": "January 2, 2019",
 		"":   "January 2, 2019",
 		"de": "2. Januar 2019",
+		"ja": "2019年1月2日",
 		"es": "2 de enero de 2019",
 	} {
 		if got := PhotoDate(d, lang); got != want {

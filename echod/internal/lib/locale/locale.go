@@ -1,5 +1,5 @@
 // Package locale writes the dates and weather words the screen shows in the screen's language: the
-// clock's day and date, the forecast's day names, and what the sky is doing. Eight languages, the ones
+// clock's day and date, the forecast's day names, and what the sky is doing, in the languages
 // the screen's Language setting offers; anything else, empty included, is English.
 //
 // Only those words. The rest of the screen's own text - its settings, its buttons - is English.
@@ -195,6 +195,9 @@ func day(t time.Time) string { return strconv.Itoa(t.Day()) }
 // "Lundi 2 janvier", "Lunedì 2 gennaio", "Maandag 2 januari", "Понедельник, 2 января",
 // "Segunda-feira, 2 de janeiro".
 func LongDate(t time.Time, lang string) string {
+	if lang == "ja" {
+		return t.Format("1月2日") + " " + Weekday(t, lang)
+	}
 	w, ok := langs[lang]
 	if !ok {
 		return t.Format("Monday, January 2")
@@ -213,6 +216,9 @@ func LongDate(t time.Time, lang string) string {
 
 // ShortDate is the date where there is less room: "Mon, Jan 2", "Mo., 2. Jan.", "Lun, 2 ene".
 func ShortDate(t time.Time, lang string) string {
+	if lang == "ja" {
+		return t.Format("1/2") + "（" + ShortWeekday(t, lang) + "）"
+	}
 	w, ok := langs[lang]
 	if !ok {
 		return t.Format("Mon, Jan 2")
@@ -245,6 +251,9 @@ func ShortWeekday(t time.Time, lang string) string {
 
 // MonthDay is the date without the day's name: "January 2", "2. Januar", "2 de enero".
 func MonthDay(t time.Time, lang string) string {
+	if lang == "ja" {
+		return t.Format("1月2日")
+	}
 	w, ok := langs[lang]
 	if !ok {
 		return t.Format("January 2")
@@ -262,6 +271,9 @@ func MonthDay(t time.Time, lang string) string {
 // PhotoDate is the day a photo was taken, with its year: "January 2, 2019", "2. Januar 2019",
 // "2 de enero de 2019", "2 января 2019".
 func PhotoDate(t time.Time, lang string) string {
+	if lang == "ja" {
+		return t.Format("2006年1月2日")
+	}
 	y := strconv.Itoa(t.Year())
 	if _, ok := langs[lang]; !ok {
 		return MonthDay(t, lang) + ", " + y
@@ -274,6 +286,9 @@ func PhotoDate(t time.Time, lang string) string {
 
 // DayAndNumber is the shortest date, a day's name and its number: "Mon 2", "Mo 2", "Lun 2".
 func DayAndNumber(t time.Time, lang string) string {
+	if lang == "ja" {
+		return day(t) + "日（" + ShortWeekday(t, lang) + "）"
+	}
 	return ShortWeekday(t, lang) + " " + day(t)
 }
 
