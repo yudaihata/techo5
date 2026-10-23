@@ -87,3 +87,7 @@ official release's verified rootfs and replace only the daemon and release label
 and the working device slot as rollback. Preserve settings and verify a five-minute automatic slot
 commit after reboot. An official OTA update can replace these local changes; rebuilding from this
 branch preserves them. The official signing keys and update feed are unchanged.
+
+To keep the fork changes, turn off **Install updates automatically** for the official feed and
+install reviewed fork builds instead. The daily upstream PR check does not depend on the device
+auto-install switch. Keeping official auto-install on means local changes may be replaced overnight.
