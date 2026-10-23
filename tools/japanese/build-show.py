@@ -48,7 +48,7 @@ def main():
     replacements = {'usr/local/bin/techo5': binary.read_bytes(),
                     'etc/techo5-release': f'techo5 rootfs {version}, Japanese fork, base {base}, commit {commit[:7]}\n'.encode()}
     changed = set()
-    with tarfile.open(official, 'r:gz') as source, tarfile.open(output, 'w:gz') as target:
+    with tarfile.open(official, 'r:gz') as source, tarfile.open(output, 'w:gz', format=tarfile.GNU_FORMAT) as target:
         for original in source:
             member = copy.copy(original)
             key = member.name.lstrip('./')
