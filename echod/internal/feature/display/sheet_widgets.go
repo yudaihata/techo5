@@ -7,7 +7,6 @@ import (
 	"image/color"
 	"math"
 	"slices"
-	"strings"
 	"sync"
 
 	"golang.org/x/image/font"
@@ -180,27 +179,9 @@ func (r *paint) width(face font.Face, s string) int {
 	return (&font.Drawer{Face: face}).MeasureString(s).Ceil()
 }
 
-// wrap breaks text into lines no wider than maxW, on spaces; a single word wider than the line is
-// left to overflow rather than split.
+// wrap prefers spaces, but also breaks words wider than the screen at UTF-8 boundaries.
 func (r *paint) wrap(face font.Face, s string, maxW int) []string {
-	var lines []string
-	var line string
-	for _, word := range strings.Fields(s) {
-		try := word
-		if line != "" {
-			try = line + " " + word
-		}
-		if line != "" && r.width(face, try) > maxW {
-			lines = append(lines, line)
-			line = word
-			continue
-		}
-		line = try
-	}
-	if line != "" {
-		lines = append(lines, line)
-	}
-	return lines
+	return wrapText(s, maxW, func(line string) int { return r.width(face, line) })
 }
 
 // shift lightens (positive) or darkens (negative) a color by d per channel.
